@@ -27,9 +27,8 @@ run_sub()
 run_sql()
 {
 	echo $PARSER
-	output=trace.sql.$which
-	echo "output: $output"
-	$PARSER -p print_sql -m $DIN_MAPS $DIN_TRACES/trace.bin.$which > $output
+	plugin_args="trace.output.sql.$which,print_exe,print_map,0,nnn,ppp"
+	$PARSER -p print_sql -a $plugin_args -m $DIN_MAPS $DIN_TRACES/trace.bin.$which
 }
 
 print_usage()
