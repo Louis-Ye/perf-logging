@@ -5,17 +5,9 @@ DOT_GENERATOR="python $HOME/prj/dinamite/bintrace-toolkit/scripts/semantic_local
 PICK_BEST_SUB="python $HOME/prj/connect_the_dots/graph_contraction/choose_subgraph.py"
 DIN_MAPS=".." # .. is used when cd trace.$which
 DIN_TRACES="../wt_traces"
+script_name=$0
 mode=$1
 which=$2
-
-if [ $# -lt 2 ]; then
-	echo "Usage:"
-	echo "      $0 MODE TRACE_NUM"
-	exit 0
-fi
-
-mkdir trace.$which
-cd trace.$which
 
 run_dot()
 {
@@ -32,6 +24,34 @@ run_sub()
 	$PICK_BEST_SUB output.dot
 }
 
+run_sql()
+{
+	echo $PARSER
+	output=trace.sql.$which
+	echo "output: $output"
+	$PARSER -p print_sql -m $DIN_MAPS $DIN_TRACES/trace.bin.$which > $output
+}
+
+print_usage()
+{
+	echo "Usage:"
+	echo "    $script_name MODE TRACE_NUM" 
+	echo "MODE values:"
+	echo "    dot"
+	echo "    sub"
+	echo "    all"
+	echo "    sql"
+}
+
+
+
+if [ $# -lt 2 ]; then
+	print_usage
+	exit 0
+fi
+
+mkdir trace.$which
+cd trace.$which
 
 if [ "$mode" == "dot" ]; then
 	run_dot
@@ -40,7 +60,10 @@ elif [ "$mode" == "sub" ]; then
 elif [ "$mode" == "all" ]; then
 	run_dot
 	run_sub
+elif [ "$mode" == "sql" ]; then
+	run_sql
 else
-	$PARSER -p print -m $DIN_MAPS $DIN_TRACES/trace.bin.$which > trace.$which
+	print_usage
+	#$PARSER -p print -m $DIN_MAPS $DIN_TRACES/trace.bin.$which > trace.$which
 fi
 
